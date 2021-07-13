@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="voip.PreviewContentAudio">
+        <div class="mk_preview_audio">
+            <audio class="smart_audio" t-att-data-title="widget.filename" controls="controls">
+                <source t-att-src="widget.url" t-att-type="widget.mimetype"/>
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+    </t>
+</templates>
