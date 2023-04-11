@@ -35,19 +35,18 @@ class Contact(models.Model):
     sanitized_mobile = fields.Char("Mobile number sanitized", compute='_compute_sanitized_mobile', store=True)
 
     def _voip_sanitization(self, number):
-        if _phonenumbers_lib_imported:
-            country = self._phone_get_country()
-            country_code = country.code if country else None
-            try:
-                phone_nbr = phonenumbers.parse(number, region=country_code, keep_raw_input=True)
-            except phonenumbers.phonenumberutil.NumberParseException:
-                return number
-            if not phonenumbers.is_possible_number(phone_nbr) or not phonenumbers.is_valid_number(phone_nbr):
-                return number
-            phone_fmt = phonenumbers.PhoneNumberFormat.INTERNATIONAL
-            return phonenumbers.format_number(phone_nbr, phone_fmt).replace(' ', '')
-        else:
+        if not _phonenumbers_lib_imported:
             return number
+        country = self._phone_get_country()
+        country_code = country.code if country else None
+        try:
+            phone_nbr = phonenumbers.parse(number, region=country_code, keep_raw_input=True)
+        except phonenumbers.phonenumberutil.NumberParseException:
+            return number
+        if not phonenumbers.is_possible_number(phone_nbr) or not phonenumbers.is_valid_number(phone_nbr):
+            return number
+        phone_fmt = phonenumbers.PhoneNumberFormat.INTERNATIONAL
+        return phonenumbers.format_number(phone_nbr, phone_fmt).replace(' ', '')
 
     @api.multi
     @api.depends('phone', 'country_id')

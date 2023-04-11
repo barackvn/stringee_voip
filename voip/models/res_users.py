@@ -49,9 +49,7 @@ class ResUsers(models.Model):
         sid_key = self.env['ir.config_parameter'].get_param('voip.api.key.sid')
         secret_key = self.env['ir.config_parameter'].get_param('voip.api.key.secret')
         for user in self:
-            jwt_payload = dict()
-            jwt_payload['iss'] = sid_key
-            jwt_payload['jti'] = sid_key + '-' + str(time.time() * 1000)
+            jwt_payload = {'iss': sid_key, 'jti': f'{sid_key}-{str(time.time() * 1000)}'}
             jwt_payload['exp'] = datetime.utcnow() + timedelta(days=user.expiry_duration)
             jwt_payload['userId'] = user.agent_name
             encoded_jwt = jwt.encode(jwt_payload, key=secret_key, algorithm="HS256", headers=JWT_HEADER)

@@ -18,22 +18,23 @@ class VoipPhonecallTransferWizard(models.TransientModel):
     @api.multi
     def save(self):
         if self.transfer_choice == 'extern':
-            action = {
+            return {
                 'type': 'ir.actions.client',
                 'tag': 'transfer_call',
                 'params': {'number': self.transfer_number},
             }
         elif self.env.user.sip_external_phone:
-                action = {
-                    'type': 'ir.actions.client',
-                    'tag': 'transfer_call',
-                    'params': {'number': self.env.user.sip_external_phone},
-                }
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'transfer_call',
+                'params': {'number': self.env.user.sip_external_phone},
+            }
         else:
-            action = {
+            return {
                 'warning': {
                     'title': _("Warning"),
-                    'message': _("Wrong configuration for the call. There is no external phone number configured"),
+                    'message': _(
+                        "Wrong configuration for the call. There is no external phone number configured"
+                    ),
                 },
             }
-        return action
