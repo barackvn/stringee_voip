@@ -53,9 +53,11 @@ class VoipPhonecall(models.Model):
         duration = round(duration_seconds / 60, 2)
         seconds = duration_seconds - int(duration) * 60
         note = False
-        if (self.activity_id):
+        if self.activity_id:
             note = self.activity_id.note
-            duration_log = '<br/><p>Call duration: ' + str(int(duration)) + 'min ' + str(int(seconds)) + 'sec</p>'
+            duration_log = (
+                f'<br/><p>Call duration: {int(duration)}min {int(seconds)}sec</p>'
+            )
             if self.activity_id.note:
                 self.activity_id.note += duration_log
             else:

@@ -49,8 +49,11 @@ class MailActivity(models.Model):
             numbers['mobile'] = record.mobile
         if not numbers['phone'] and not numbers['mobile']:
             fields = model._fields.items()
-            partner_field_name = [k for k, v in fields if v.type == 'many2one' and v.comodel_name == 'res.partner']
-            if partner_field_name:
+            if partner_field_name := [
+                k
+                for k, v in fields
+                if v.type == 'many2one' and v.comodel_name == 'res.partner'
+            ]:
                 numbers['phone'] = record[partner_field_name[0]].phone
                 numbers['mobile'] = record[partner_field_name[0]].mobile
         return numbers
@@ -58,8 +61,7 @@ class MailActivity(models.Model):
     @api.multi
     def action_feedback(self, feedback=False):
         mail_message_id = False
-        phone_activities = self.filtered(lambda a: a.voip_phonecall_id)
-        if phone_activities:
+        if phone_activities := self.filtered(lambda a: a.voip_phonecall_id):
             remaining = self - phone_activities
             for activity in phone_activities:
                 user_id = activity.user_id.partner_id.id
@@ -70,7 +72,7 @@ class MailActivity(models.Model):
                 vals = {
                     'state': 'done',
                     'mail_message_id': mail_message_id,
-                    'note': feedback if feedback else note,
+                    'note': feedback or note,
                 }
                 if not voip_phonecall_id.call_date:
                     vals.update(call_date=fields.Datetime.now())
